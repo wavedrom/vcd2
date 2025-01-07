@@ -1,2 +1,1 @@
-# vcdrom2
-VCDrom V2
+VCD parser V2
