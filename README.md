@@ -7,7 +7,14 @@
 
 ## Development / testing
 
-### Patch http-server
+```
+npm i
+npm test
+```
+
+### Testing in browser
+
+#### Patch http-server
 
 node_modules / http-server / bin / http-server : Line: 166
 
@@ -17,6 +24,9 @@ node_modules / http-server / bin / http-server : Line: 166
     'Cross-Origin-Embedder-Policy': 'require-corp'
   };
 ```
+
+#### Run HTTP server
+
 
 ```bash
 http-server app -b
