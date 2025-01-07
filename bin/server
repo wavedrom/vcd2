@@ -1,0 +1,60 @@
+#!/usr/bin/env node
+'use strict';
+
+const cp = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const process = require('process');
+const readline = require('readline');
+
+const commander = require('commander');
+
+const main = async () => {
+  commander.program
+    .requiredOption('--vcd <file>', 'VCD file name')
+    .parse(process.argv);
+
+  const opts = commander.program.opts();
+  const vcdFifoPath = path.resolve(opts.vcd);
+  const fifo = cp.spawn('mkfifo', [vcdFifoPath]);
+
+  await new Promise((resolve, reject) => {
+    fifo.on('exit', resolve());
+  });
+
+  // process.on('SIGINT', (code) => {
+  //   console.log('SIGINT:', code);
+  //   fs.rmSync(vcdFifoPath);
+  //   process.exit(0);
+  // });
+
+  while (true) {
+    process.stdout.write(':');
+    const fifoRs = fs.createReadStream(vcdFifoPath);
+
+    let total = 0;
+    // log out when it's been written to
+    fifoRs.on('data', v => {
+      total += v.length;
+      readline.cursorTo(process.stdout, 2);
+      process.stdout.write(total.toLocaleString());
+    });
+
+    fifoRs.on('error', v => {
+      console.log('error:', v);
+    });
+
+    fifoRs.on('resume', () => {
+      process.stdout.write('(');
+    });
+
+    await new Promise((resolve, reject) => {
+      fifoRs.on('end', () => {
+        console.log(')');
+        resolve();
+      });
+    });
+  }
+};
+
+main();
