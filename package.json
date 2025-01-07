@@ -3,6 +3,12 @@
   "version": "0.1.0",
   "description": "VCD parser",
   "main": "lib/index.js",
+  "files": [
+    "app",
+    "lib",
+    "include",
+    "src"
+  ],
   "scripts": {
     "test": "eslint bin lib",
     "build.vcd-parser": "node ./bin/build-vcd-parser.js",
