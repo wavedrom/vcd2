@@ -1,15 +1,14 @@
 #!/usr/bin/env node
 'use strict';
 
-const cp = require('child_process');
+const childProcess = require('child_process');
+const process = require('process');
 const fs = require('fs');
-// const process = require('process');
-// const path = require('path');
 
-// const commander = require('commander');
-// const chokidar = require('chokidar');
+const commander = require('commander');
+const chokidar = require('chokidar');
 
-const options = [
+const clangOptions = (args, opts) => [
   '-std=c11',
   '-Os',
   '-flto',
@@ -28,13 +27,12 @@ const options = [
   '-Wl,--export=init',
   '-Wl,--export=chunk',
   '-Isrc',
-  '-o', './app/vcd.wasm',
-  './src/vcd_parser.c',
-  './src/vcd_wasm.c'
+  '-o', opts.output,
+  ...args
 ];
 
-const build = () => {
-  const clang = cp.spawn('clang-18', options);
+const compile = (opts, clangOpts) => {
+  const clang = childProcess.spawn('clang-18', clangOpts);
   clang.stdout.on('data', (data) => {
     console.log(`stdout: ${data}`);
   });
@@ -43,28 +41,50 @@ const build = () => {
     console.error(`stderr: ${data}`);
   });
   clang.on('close', () => {
-    const wasmName = './app/vcd.wasm';
-    fs.stat(wasmName, (err, stats) => {
+    fs.stat(opts.output, (err, stats) => {
       if (err) {
-        console.log('clang-18 ' + options.join(' '));
+        console.log('clang-18 ' + clangOpts.join(' '));
         throw new Error(err);
       }
-      console.log(wasmName, stats.size);
+      if (opts.verbose) {
+        console.log(opts.output, stats.size);
+      }
     });
   });
 };
 
-// const watch = async () => {
-//   console.log('clang', options.join(' '));
-//   // One-liner for current directory
+function increaseVerbosity(dummyValue, previous) {
+  return previous + 1;
+}
 
-//   const watcher = chokidar.watch([
-//     'vcd_parser.h',
-//     'vcd_parser.c',
-//   ]);
-//   watcher.on('all', (event, fileName) => {
-//     build();
-//   });
-// };
+const build = async () => {
+  const program = new commander.Command();
+
+  program
+    .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
+    .option('-w, --watch', 'keep watching for source file changes')
+    .requiredOption('-o, --output <file>', 'output WASM file path')
+    .argument('<files...>', 'GLOB expressions or source file names')
+    .parse(process.argv);
+
+  const args = program.args;
+  const opts = program.opts();
+  const clangOpts = clangOptions(args, opts);
+
+  if (opts.watch) {
+    const watcher = chokidar.watch(args, {
+      ignored: /(^|[/\\])\../, // ignore dotfiles
+      persistent: true
+    });
+    watcher.on('change', async (filename) => {
+      if (opts.verbose) {
+        process.stdout.write(`File ${filename} changed : `);
+      }
+      compile(opts, clangOpts);
+    });
+  } else {
+    compile(opts, clangOpts);
+  }
+};
 
 build();
