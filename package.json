@@ -12,7 +12,7 @@
   "scripts": {
     "test": "eslint bin lib",
     "build.vcd-parser": "node ./bin/build-vcd-parser.js",
-    "build.wasm": "node ./bin/build-wasm.js",
+    "build.wasm": "node ./bin/build-wasm.js src/*.c -o app/vcd.wasm",
     "build.main": "browserify ./lib/vcdrom2.js | terser --compress -o app/vcdrom2.js",
     "build.vcd-worker": "browserify ./lib/vcd-worker.js | terser --compress -o app/vcd-worker.js",
     "build": "npm run build.vcd-parser ; npm run build.wasm ; npm run build.main ; npm run build.vcd-worker",
