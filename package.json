@@ -1,9 +1,12 @@
 {
   "name": "vcd2",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "VCD parser",
   "main": "index.js",
-  "files": ["lib", "*.js"],
+  "files": [
+    "lib",
+    "*.js"
+  ],
   "scripts": {
     "test": "eslint index.js lib build",
     "build": "node ./build/build.js -v",
