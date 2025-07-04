@@ -1,4 +1,5 @@
-app/vcd*
-src/vcd_parser.*
 node_modules
 package-lock.json
+vcd_parser.*
+*.wasm
+*.wasm.js

@@ -1,8 +1,8 @@
 'use strict';
 
-const loadWasm = require('./load-wasm.js');
-const initVcdWorkerState = require('./init-vcd-worker-state.js');
-const streamData = require('./stream-data.js');
+const loadWasm = require('../../lib/load-wasm.js');
+const initVcdWorkerState = require('../../lib/init-vcd-worker-state.js');
+const streamData = require('../../lib/stream-data.js');
 
 const main = async () => {
   const t0 = Date.now();

@@ -36,8 +36,8 @@ const main = async () => {
     // log out when it's been written to
     fifoRs.on('data', v => {
       total += v.length;
-      readline.cursorTo(process.stdout, 2);
-      process.stdout.write(total.toLocaleString());
+      // readline.cursorTo(process.stdout, 2);
+      process.stdout.write(v.length.toLocaleString() + ' ');
     });
 
     fifoRs.on('error', v => {

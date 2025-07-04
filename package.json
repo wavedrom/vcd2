@@ -2,23 +2,13 @@
   "name": "vcd2",
   "version": "0.2.0",
   "description": "VCD parser",
-  "main": "lib/index.js",
-  "files": [
-    "app",
-    "lib",
-    "include",
-    "src"
-  ],
+  "main": "index.js",
+  "files": ["lib", "*.js"],
   "scripts": {
-    "test": "eslint bin lib",
-    "build.vcd-parser": "node ./bin/build-vcd-parser.js",
-    "build.wasm": "node ./bin/build-wasm.js src/*.c -o app/vcd.wasm",
-    "build.main": "browserify ./lib/vcdrom2.js | terser --compress -o app/vcdrom2.js",
-    "build.vcd-worker": "browserify ./lib/vcd-worker.js | terser --compress -o app/vcd-worker.js",
-    "build": "npm run build.vcd-parser ; npm run build.wasm ; npm run build.main ; npm run build.vcd-worker",
-    "watch.main": "watchify ./lib/vcdrom2.js -o '| terser --compress > app/vcdrom2.js' -v",
-    "watch.vcd-worker": "watchify ./lib/vcd-worker.js -o '| terser --compress > app/vcd-worker.js' -v",
-    "watch": "npm run watch.main & npm run watch.vcd-worker &"
+    "test": "eslint index.js lib build",
+    "build": "node ./build/build.js -v",
+    "watch": "node ./build/build.js -v -w",
+    "clean": "rm vcd_parser.* vcd2.wasm vcd2.wasm.js"
   },
   "repository": {
     "type": "git",
@@ -35,18 +25,14 @@
   "homepage": "https://github.com/wavedrom/vcd2#readme",
   "dependencies": {},
   "devDependencies": {
-    "@drom/eslint-config": "0.12.0",
-    "browserify": "17.0.1",
+    "@drom/eslint-config": "0.13.0",
     "chokidar": "4.0.3",
-    "commander": "13.0.0",
+    "commander": "14.0.0",
     "eslint": "8.57.1",
-    "http-server": "14.1.1",
-    "llparse": "7.1.1",
-    "llparse-dot": "1.0.1",
-    "terser": "5.37.0",
-    "watchify": "4.0.0"
+    "llparse": "7.3.0",
+    "llparse-dot": "1.0.1"
   },
   "eslintConfig": {
-    "extends": "@drom/eslint-config/eslint8/node12"
+    "extends": "@drom/eslint-config/eslint8/node22"
   }
 }

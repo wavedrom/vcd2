@@ -31,9 +31,3 @@ node_modules / http-server / bin / http-server : Line: 166
 ```bash
 http-server app -b
 ```
-
-
-### TODO
-
-* try clang-19,20. -> missing wasm-ld 19,20
-

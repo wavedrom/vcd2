@@ -1,6 +1,6 @@
 'use strict';
 
-const memmap = require('./memmap.js');
+const memmap = require('../../lib/memmap.js');
 
 const traceGlPages = ($) => {
 

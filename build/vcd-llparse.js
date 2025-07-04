@@ -13,49 +13,19 @@ const objection = lut => arg => arg.split(/\s+/).reduce((res, key) => {
   return res;
 }, {});
 
-const properties = { // FIX memmap.js when changed
-  t0:               'i64', //  8 : start dump time
-  time:             'i64', // 10 : current simulation time
-  definitions_ptr:  'ptr', // 12 :
-  output_idx_ptr:   'ptr', // 13 :
-  free_page_ptr:    'ptr', // 14
-  num_ids:          'i32', // 15
-
-  id_sum:       'i32',
-  size:         'i32',
-  trigger:      'ptr',
-  triee:        'ptr', // trigger event emitter
-  lifee:        'ptr', // life cycle event emmiter
-  info:         'ptr',
-  value:        'ptr', // value of the signal on change event
-  mask:         'ptr', // mask (x, z) of the signal on change event
-  digitCount:   'i32',
-  maskCount:    'i32',
-  tmpStr:       'ptr',
-  timeStampStr: 'ptr',
-  idStr:        'ptr',
-  tmpStr2:      'ptr',
-  stackPointer: 'i32',
-  id:           'ptr',
-  napi_env:     'ptr',
-  command:      'i8',
-  type:         'i8'
-};
-
-const grammar = (prj) => {
+const grammar = (prj, props) => {
 
   const p = new llparse.LLParse(prj);
 
-  Object.keys(properties).map(key => p.property(properties[key], key));
+  props.map(({name, type}) => p.property(type, name));
 
   const {
     // scopeIdentifierSpan,
-    varSizeSpan, varIdSpan, varNameSpan,
+    // varSizeSpan, varIdSpan, varNameSpan,
     idSpan,
     commandSpan,
     timeSpan
   } = `
-    varSizeSpan varIdSpan varNameSpan
     idSpan
     commandSpan
     timeSpan
@@ -69,10 +39,10 @@ const grammar = (prj) => {
     declaration,
     // scopeType, scopeTypeEnd,
     // scopeIdentifier, scopeIdentifierEnd,
-    varType, varTypeEnd,
-    varSize, varSizeEnd,
-    varId, varIdEnd,
-    varName, varNameEnd,
+    // varType, varTypeEnd,
+    // varSize, varSizeEnd,
+    // varId, varIdEnd,
+    // varName, varNameEnd,
     inDeclaration,
     simulation,
     inSimulation,
@@ -81,10 +51,6 @@ const grammar = (prj) => {
     simulationId
   } = `
     declaration
-    varType varTypeEnd
-    varSize varSizeEnd
-    varId varIdEnd
-    varName varNameEnd
     inDeclaration
     simulation
     inSimulation
@@ -136,83 +102,6 @@ const grammar = (prj) => {
     .select(cmd('$enddefinitions'),
       p.invoke(p.code.store('command'), commandSpan.start(enddefinitions)))
     .otherwise(p.error(1, 'Expected declaration command'));
-
-  // $scope module clkdiv2n_tb $end
-  //        ^^^^^^
-
-  // scopeType.match(spaces, scopeType).otherwise(scopeTypeEnd);
-  // scopeTypeEnd
-  //   .select(
-  //     {
-  //       module: 0,
-  //       task: 1,
-  //       function: 2,
-  //       begin: 3,
-  //       fork: 4,
-  //       // extra scopes from Verilator
-  //       generate: 5,
-  //       struct: 6,
-  //       union: 7,
-  //       class: 8,
-  //       interface: 9,
-  //       package: 10,
-  //       program: 11
-  //     },
-  //     p.invoke(p.code.store('type'), scopeIdentifier))
-  //   .otherwise(p.error(2, 'Expected scope type'));
-
-  // $scope module clkdiv2n_tb $end
-  //               ^^^^^^^^^^^
-
-  // scopeIdentifier.match(spaces, scopeIdentifier).otherwise(scopeIdentifierSpan.start(scopeIdentifierEnd));
-  // scopeIdentifierEnd.match(spaces, scopeIdentifierSpan.end(inDeclaration)).skipTo(scopeIdentifierEnd);
-
-  // $var reg 3 ( r_reg [2:0] $end
-  //      ^^^
-
-  varType.match(spaces, varType).otherwise(varTypeEnd);
-  varTypeEnd
-    .select({
-      event: 1,
-      integer: 2,
-      parameter: 3,
-      real: 4,
-      realtime: 5,
-      reg: 6,
-      supply0: 7,
-      supply1: 8,
-      time: 9,
-      tri: 10,
-      triand: 11,
-      trior: 12,
-      trireg: 13,
-      tri0: 14,
-      tri1: 15,
-      wand: 16,
-      wire: 17,
-      wor: 18
-    }, p.invoke(p.code.store('type'), varSize))
-    .otherwise(p.error(3, 'Expected var type'));
-
-  // $var reg 3 ( r_reg [2:0] $end
-  //          ^
-
-  varSize.match(spaces, varSize).otherwise(varSizeSpan.start(varSizeEnd));
-  varSizeEnd.match(spaces, varSizeSpan.end(varId)).skipTo(varSizeEnd);
-
-  // $var reg 3 ( r_reg [2:0] $end
-  //            ^
-
-  varId.match(spaces, varId).otherwise(varIdSpan.start(varIdEnd));
-  varIdEnd.match(spaces, varIdSpan.end(varName)).skipTo(varIdEnd);
-
-  // $var reg 3 ( r_reg [2:0] $end
-  //              ^^^^^
-
-  varName.match(spaces, varName).otherwise(varNameSpan.start(varNameEnd));
-  varNameEnd.match('$end', commandSpan.end(varNameSpan.end(declaration))).skipTo(varNameEnd);
-
-  // $end
 
   inDeclaration
     .match('$end', commandSpan.end(declaration))

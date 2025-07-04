@@ -1,7 +1,7 @@
 'use strict';
 
-const memmap = require('./memmap.js');
-const initState = require('./init-state.js');
+const memmap = require('../../lib/memmap.js');
+const initState = require('../../lib/init-state.js');
 const traceGlPages = require('./trace-gl-pages.js');
 
 global.TestVCD = async () => {
