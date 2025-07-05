@@ -1,3 +1,4 @@
+[![NPM version](https://img.shields.io/npm/v/vcd2.svg)](https://www.npmjs.org/package/vcd2)
 
 ## Features
 
