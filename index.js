@@ -5,6 +5,7 @@ const addWasmMemoryViews = require('./lib/add-wasm-memory-views.js');
 const commandHandler = require('./lib/command-handler.js');
 const initVcdWorkerState = require('./lib/init-vcd-worker-state.js');
 const loadWasmNode = require('./lib/load-wasm-node.js');
+const loadWasm = require('./lib/load-wasm.js');
 const memmap = require('./lib/memmap.js');
 const props = require('./lib/props.js');
 
@@ -13,5 +14,6 @@ exports.addWasmMemoryViews = addWasmMemoryViews;
 exports.commandHandler = commandHandler;
 exports.initVcdWorkerState = initVcdWorkerState;
 exports.loadWasmNode = loadWasmNode;
+exports.loadWasm = loadWasm;
 exports.memmap = memmap;
 exports.props = props;
