@@ -1,6 +1,9 @@
 # VCD2 - High-Performance VCD Parser
 
 [![NPM version](https://img.shields.io/npm/v/vcd2.svg)](https://www.npmjs.org/package/vcd2)
+[![Linux](https://github.com/wavedrom/vcd2/actions/workflows/linux.yml/badge.svg)](https://github.com/wavedrom/vcd2/actions/workflows/linux.yml)
+[![MacOS](https://github.com/wavedrom/vcd2/actions/workflows/macos.yml/badge.svg)](https://github.com/wavedrom/vcd2/actions/workflows/macos.yml)
+[![Windows](https://github.com/wavedrom/vcd2/actions/workflows/windows.yml/badge.svg)](https://github.com/wavedrom/vcd2/actions/workflows/windows.yml)
 
 VCD2 is a high-performance **VCD (Value Change Dump) parser** written in C and compiled to WebAssembly (WASM). It provides efficient streaming parsing of VCD files for both browser and Node.js environments.
 
